@@ -120,7 +120,7 @@ git commit -m "add README.MD"
 
 Сделаем так, чтобы git игнорировал все файлы и папки, кроме нужных.
 ```
-/*
+*
 !README.md
 !.gitignore
 !learngitbranching1.png
