@@ -1,0 +1,6 @@
+# Ignore all directories and files except README.md and .gitignore
+*
+!README.md
+!.gitignore
+!learngitbranching1.png
+!learngitbranching2.png
