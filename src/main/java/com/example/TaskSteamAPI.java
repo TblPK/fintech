@@ -25,7 +25,7 @@ public class TaskSteamAPI {
 
     // Создать функцию для поиска регионов, больше какой-то определенной температуры
     public static List<String> findRegionsWithTemperatureAbove(List<Weather> weatherList, int value) {
-        return weatherList.stream().filter(w -> w.getTemperature() >= value).map(Weather::getRegionName).collect(Collectors.toList());
+        return weatherList.stream().filter(w -> w.getTemperature() >= value).map(Weather::getRegionName).toList();
     }
 
     // Преобразовать список в Map, у которой ключ - уникальный идентификатор, значение - список со значениями температур
