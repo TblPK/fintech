@@ -1,15 +1,18 @@
 package com.example;
 
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import java.time.LocalDateTime;
 
 public class TaskSteamAPI {
     public static void main(String[] args) {
         List<Weather> weatherList = new ArrayList<>();
-        weatherList.add(new Weather(1, 1, "one", new Date()));
-        weatherList.add(new Weather(2, 3, "two", new Date()));
-        weatherList.add(new Weather(2, 3, "three", new Date()));
-        weatherList.add(new Weather(1, 4, "four", new Date()));
+        weatherList.add(new Weather(1, 1, "SPB", LocalDateTime.now()));
+        weatherList.add(new Weather(2, 3, "MSK", LocalDateTime.now()));
+        weatherList.add(new Weather(2, 3, "VLG", LocalDateTime.now()));
+        weatherList.add(new Weather(1, 4, "UFO", LocalDateTime.now()));
 
         System.out.println("Avg: " + calcAvgTemperature(weatherList));
         System.out.println("Find: " + findRegionsWithTemperatureAbove(weatherList, 3));

@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Date;
+import java.time.*;
 
 @ToString
 @Getter
@@ -15,5 +15,5 @@ public class Weather {
     private int regionId;
     private int temperature; // °C
     private String regionName;
-    private Date dateTime;
+    private LocalDateTime dateTime;
 }
