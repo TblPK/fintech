@@ -1,13 +1,6 @@
 # FinTech
 ***Решил сделать README.MD в виде dropdown списков***
 
-<details> <summary>Пройти интерактивный курс по git</summary>
-
-Пруфы прохождения интерактивного курса по [git](https://learngitbranching.js.org/?locale=ru_RU):
-![](learngitbranching1.png)
-![](learngitbranching2.png)
-</details>
-
 <details> <summary>Создать репозиторий на GitHub</summary> 
 
 На GitHub был создан пустой репозиторий под названием [fintech](https://github.com/TblPK/fintech/)
