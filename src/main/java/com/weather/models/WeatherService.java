@@ -35,7 +35,9 @@ public class WeatherService {
                 .filter(w -> w.getCityName().equals(weather.getCityName()))
                 .findFirst();
 
-        if (optional.isPresent()) return false;
+        if (optional.isPresent()) {
+            return false;
+        }
         weathers.add(weather);
         return true;
     }
@@ -46,8 +48,11 @@ public class WeatherService {
                         w.getDateTime().isEqual(weather.getDateTime()))
                 .findFirst();
 
-        if (optional.isEmpty()) weathers.add(weather);
-        else optional.get().setTemperature(weather.getTemperature());
+        if (optional.isEmpty()) {
+            weathers.add(weather);
+        } else {
+            optional.get().setTemperature(weather.getTemperature());
+        }
     }
 
     public void deleteWeathersByCityName(String cityName) {

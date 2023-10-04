@@ -21,7 +21,6 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    // implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 
     compileOnly 'org.projectlombok:lombok'
@@ -30,16 +29,6 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
-
-//mainClassName = 'com.weather.TaskSteamAPI'
-//tasks.register('fatJar', Jar) {
-//	manifest {
-//		attributes 'Main-Class': "${mainClassName}"
-//	}
-//	archiveBaseName = "${rootProject.name}"
-//	from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
-//	with jar
-//}
 
 tasks.named('test') {
     useJUnitPlatform()

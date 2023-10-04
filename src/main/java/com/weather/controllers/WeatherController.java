@@ -34,7 +34,9 @@ public class WeatherController {
     public ResponseEntity<List<Weather>> getCurrentWeather(@PathVariable("city") @Parameter(description = "City Name") String cityName,
                                                            @RequestParam @Parameter(description = "Required date") LocalDate date) {
         List<Weather> weathers = weatherService.getCurrentWeather(cityName, date);
-        if (weathers.isEmpty()) return ResponseEntity.notFound().build();
+        if (weathers.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(weathers);
     }
 
@@ -43,11 +45,12 @@ public class WeatherController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieve a list of all weather records",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Weather.class))),
             @ApiResponse(responseCode = "404", description = "Information is not found", content = @Content)})
-    @GetMapping("/get-all")
+    @GetMapping("/")
     public ResponseEntity<List<Weather>> getAllWeather() {
-
         List<Weather> weathers = weatherService.getWeathers();
-        if (weathers.isEmpty()) return ResponseEntity.notFound().build();
+        if (weathers.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(weathers);
     }
 
@@ -61,7 +64,9 @@ public class WeatherController {
                                                  @RequestBody @Parameter(description = "Weather information including temperature and date") Weather weather) {
         weather.setCityName(cityName);
         boolean isCreated = weatherService.createWeather(weather);
-        if (isCreated) return ResponseEntity.ok(weather);
+        if (isCreated) {
+            return ResponseEntity.ok(weather);
+        }
         return ResponseEntity.notFound().build();
     }
 
