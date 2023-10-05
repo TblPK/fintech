@@ -20,6 +20,14 @@ import java.util.Optional;
 public class WeatherService {
     private final WeatherRepository weatherRepository;
 
+    /**
+     * Получение списка данных о погоде в указанном городе на заданную дату.
+     *
+     * @param cityName Название города.
+     * @param date     Заданная дата.
+     * @return Список данных о погоде.
+     * @throws WeatherNotFoundException Если данные о погоде не найдены.
+     */
     public List<Weather> getWeatherListForDate(String cityName, LocalDate date) {
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(LocalTime.of(23, 59, 59));
@@ -37,6 +45,14 @@ public class WeatherService {
         return weatherList;
     }
 
+    /**
+     * Создание нового города с информацией о температуре и дате.
+     *
+     * @param cityName    Название города.
+     * @param temperature Температура.
+     * @param dateTime    Дата и время.
+     * @throws WeatherAlreadyExistsException Если город уже существует.
+     */
     public void createCity(String cityName, double temperature, LocalDateTime dateTime) {
         boolean isExists = weatherRepository.addCity(cityName, temperature, dateTime);
         if (!isExists) {
@@ -44,6 +60,14 @@ public class WeatherService {
         }
     }
 
+    /**
+     * Обновление или добавление данных о погоде на заданную дату в указанном городе.
+     *
+     * @param cityName    Название города.
+     * @param temperature Температура.
+     * @param dateTime    Дата и время.
+     * @throws WeatherNotFoundException Если данные о погоде не найдены.
+     */
     public void updateWeather(String cityName, double temperature, LocalDateTime dateTime) {
         boolean isExists = weatherRepository.getTempDB().containsKey(cityName);
         if (!isExists) {
@@ -60,6 +84,11 @@ public class WeatherService {
         }
     }
 
+    /**
+     * Удаление всех данных о погоде для указанного города.
+     *
+     * @param cityName Название города.
+     */
     public void deleteWeathersByCityName(String cityName) {
         weatherRepository.getTempDB().remove(cityName);
     }

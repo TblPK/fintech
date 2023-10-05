@@ -23,6 +23,13 @@ public class WeatherController {
 
     private final WeatherService weatherService;
 
+    /**
+     * Получение списка данных о погоде в указанном городе на заданную дату.
+     *
+     * @param cityName Название города.
+     * @param date     Заданная дата.
+     * @return Список данных о погоде.
+     */
     @Operation(summary = "Get a list of weather data in the specified city on a given date")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully found a list of weather data in the specified city on a given date", content = @Content),
@@ -36,6 +43,11 @@ public class WeatherController {
         return weatherService.getWeatherListForDate(cityName, date);
     }
 
+    /**
+     * Получение списка всех данных о погоде во всех городах.
+     *
+     * @return Карта с данными о погоде.
+     */
     @Operation(summary = "Get a list of all weather data")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully found a list of all weather data", content = @Content)
@@ -45,6 +57,12 @@ public class WeatherController {
         return weatherService.getWeatherRepository().getTempDB();
     }
 
+    /**
+     * Добавление нового города с информацией о температуре и дате.
+     *
+     * @param cityName Название города.
+     * @param weather  Информация о погоде, включая температуру и дату.
+     */
     @Operation(summary = "Add a new city with temperature and date information")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully added a new city", content = @Content),
@@ -58,6 +76,12 @@ public class WeatherController {
         weatherService.createCity(cityName, weather.getTemperature(), weather.getDateTime());
     }
 
+    /**
+     * Обновление или добавление данных о погоде на заданную дату в указанном городе.
+     *
+     * @param cityName Название города.
+     * @param weather  Информация о погоде, включая температуру и дату.
+     */
     @Operation(summary = "Update or add weather data for a given date in the specified city")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated or added weather data information", content = @Content),
@@ -71,6 +95,11 @@ public class WeatherController {
         weatherService.updateWeather(cityName, weather.getTemperature(), weather.getDateTime());
     }
 
+    /**
+     * Удаление всех данных о погоде для указанного города.
+     *
+     * @param cityName Название города.
+     */
     @Operation(summary = "Delete all weather data information for a specific city")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully deleted all weather data information for the specified city", content = @Content)
