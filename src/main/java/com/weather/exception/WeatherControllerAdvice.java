@@ -15,7 +15,7 @@ public class WeatherControllerAdvice {
 
     @ExceptionHandler
     public ResponseEntity<String> handleException(WeatherAlreadyExistsException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CREATED);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
     }
 
 }

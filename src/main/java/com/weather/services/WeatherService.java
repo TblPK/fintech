@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Getter
@@ -21,46 +20,47 @@ import java.util.Optional;
 public class WeatherService {
     private final WeatherRepository weatherRepository;
 
-    public List<Weather> getCurrentWeather(String cityName, LocalDate date) {
+    public List<Weather> getWeatherListForDate(String cityName, LocalDate date) {
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(LocalTime.of(23, 59, 59));
 
-        List<Weather> weatherList = weatherRepository.tempDB.stream()
-                .filter(w -> w.getCityName().equals(cityName) &&
-                        w.getDateTime().isAfter(startOfDay) &&
-                        w.getDateTime().isBefore(endOfDay)).toList();
+        if (!weatherRepository.getTempDB().containsKey(cityName)) {
+            throw new WeatherNotFoundException(cityName);
+        }
+
+        List<Weather> weatherList = weatherRepository.getTempDB().get(cityName).stream()
+                .filter(w -> w.getDateTime().isAfter(startOfDay) && w.getDateTime().isBefore(endOfDay)).toList();
 
         if (weatherList.isEmpty()) {
-            throw new WeatherNotFoundException(cityName, startOfDay, endOfDay);
+            throw new WeatherNotFoundException(cityName);
         }
         return weatherList;
     }
 
-    public void createWeather(Weather weather) {
-        Optional<Weather> optional = weatherRepository.tempDB.stream()
-                .filter(w -> w.getCityName().equals(weather.getCityName()))
-                .findFirst();
-
-        if (optional.isPresent()) {
-            throw new WeatherAlreadyExistsException(weather.getCityName());
+    public void createCity(String cityName, double temperature, LocalDateTime dateTime) {
+        boolean isExists = weatherRepository.addCity(cityName, temperature, dateTime);
+        if (!isExists) {
+            throw new WeatherAlreadyExistsException(cityName);
         }
-        weatherRepository.tempDB.add(weather);
     }
 
-    public void updateWeather(Weather weather) {
-        Optional<Weather> optional = weatherRepository.tempDB.stream()
-                .filter(w -> w.getCityName().equals(weather.getCityName()) &&
-                        w.getDateTime().isEqual(weather.getDateTime()))
+    public void updateWeather(String cityName, double temperature, LocalDateTime dateTime) {
+        boolean isExists = weatherRepository.getTempDB().containsKey(cityName);
+        if (!isExists) {
+            throw new WeatherNotFoundException(cityName);
+        }
+        Optional<Weather> optional = weatherRepository.getTempDB().get(cityName).stream()
+                .filter(w -> w.getCityName().equals(cityName) && w.getDateTime().isEqual(dateTime))
                 .findFirst();
 
         if (optional.isEmpty()) {
-            weatherRepository.tempDB.add(weather);
+            weatherRepository.addWeather(cityName, temperature, dateTime);
         } else {
-            optional.get().setTemperature(weather.getTemperature());
+            optional.get().setTemperature(temperature);
         }
     }
 
     public void deleteWeathersByCityName(String cityName) {
-        weatherRepository.tempDB.removeIf(w -> Objects.equals(w.getCityName(), cityName));
+        weatherRepository.getTempDB().remove(cityName);
     }
 }

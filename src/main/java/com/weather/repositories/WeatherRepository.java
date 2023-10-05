@@ -1,24 +1,47 @@
 package com.weather.repositories;
 
 import com.weather.models.Weather;
+import lombok.Getter;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Repository
+@Getter
 public class WeatherRepository {
 
-    //Сделал мапу с ключом по cityName, а значение лист, которые содержит Weather
-    public final List<Weather> tempDB = new ArrayList<>();
+    private final Map<String, List<Weather>> tempDB = new HashMap<>();
+    private static final Map<String, UUID> uuidMap = new HashMap<>();
+
+    public boolean addCity(String cityName, double temperature, LocalDateTime dateTime) {
+        if (!tempDB.containsKey(cityName)) {
+            tempDB.put(cityName, new ArrayList<>());
+            uuidMap.put(cityName, UUID.randomUUID());
+            Weather weather = new Weather(uuidMap.get(cityName), cityName);
+            weather.setTemperature(temperature);
+            weather.setDateTime(dateTime);
+            tempDB.get(cityName).add(weather);
+            return true;
+        }
+        return false;
+    }
+
+    public void addWeather(String cityName, double temperature, LocalDateTime dateTime) {
+        if (tempDB.containsKey(cityName)) {
+            Weather weather = new Weather(uuidMap.get(cityName), cityName);
+            weather.setTemperature(temperature);
+            weather.setDateTime(dateTime);
+            tempDB.get(cityName).add(weather);
+        }
+    }
 
     {
         LocalDateTime time = LocalDateTime.now();
-        tempDB.add(new Weather("Msk", 0.1, time));
-        tempDB.add(new Weather("Msk", 3.5, LocalDateTime.of(2023,10, 1,17,30,0)));
-        tempDB.add(new Weather("Spb", -24.5, time));
-        tempDB.add(new Weather("Vlg", 33.5, time));
-        tempDB.add(new Weather("Vlg", 30.5, LocalDateTime.of(2023,10, 1,17,30,0)));
+        addCity("Msk", 0.1, time);
+        addWeather("Msk", 3.5, LocalDateTime.of(2023,10, 5,17,30,0));
+        addCity("Spb", -24.5, time);
+        addCity("Vlg", 33.5, time);
+        addWeather("Vlg", 30.5, LocalDateTime.of(2023,10, 5,17,30,0));
     }
 }
