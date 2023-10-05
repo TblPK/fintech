@@ -1,15 +1,16 @@
-package com.weather.dao;
+package com.weather.repositories;
 
 import com.weather.models.Weather;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-public class WeatherDao {
+@Repository
+public class WeatherRepository {
 
+    //Сделал мапу с ключом по cityName, а значение лист, которые содержит Weather
     public final List<Weather> tempDB = new ArrayList<>();
 
     {
