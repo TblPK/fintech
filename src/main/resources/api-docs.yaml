@@ -1,0 +1,126 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+tags:
+- name: WeatherDataController
+  description: Weather data controller
+paths:
+  /api/weather/{city}:
+    get:
+      tags:
+      - WeatherDataController
+      summary: Get a list of weather data in the specified city on a given date
+      operationId: getWeatherListForDate
+      parameters:
+      - name: city
+        in: path
+        description: City Name
+        required: true
+        schema:
+          type: string
+      - name: date
+        in: query
+        description: Required date
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        "404":
+          description: A list of weather data in the specified city on a given date
+            was not found
+        "200":
+          description: Successfully found a list of weather data in the specified
+            city on a given date
+    put:
+      tags:
+      - WeatherDataController
+      summary: Update or add weather data for a given date in the specified city
+      operationId: updateWeather
+      parameters:
+      - name: city
+        in: path
+        description: City Name
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Weather'
+        required: true
+      responses:
+        "200":
+          description: Successfully updated or added weather data information
+        "404":
+          description: The weather already exists
+    post:
+      tags:
+      - WeatherDataController
+      summary: Add a new city with temperature and date information
+      operationId: createWeather
+      parameters:
+      - name: city
+        in: path
+        description: City Name
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Weather'
+        required: true
+      responses:
+        "409":
+          description: The city already exists
+        "200":
+          description: Successfully added a new city
+    delete:
+      tags:
+      - WeatherDataController
+      summary: Delete all weather data information for a specific city
+      operationId: deleteWeathersByCityName
+      parameters:
+      - name: city
+        in: path
+        description: City Name
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successfully deleted all weather data information for the specified
+            city
+  /api/weather/:
+    get:
+      tags:
+      - WeatherDataController
+      summary: Get a list of all weather data
+      operationId: getAllWeather
+      responses:
+        "200":
+          description: Successfully found a list of all weather data
+components:
+  schemas:
+    Weather:
+      type: object
+      properties:
+        cityId:
+          type: string
+          format: uuid
+        cityName:
+          type: string
+        temperature:
+          type: number
+          format: double
+        dateTime:
+          type: string
+          format: date-time
+      description: "Required weather data information, including temperature and date"
