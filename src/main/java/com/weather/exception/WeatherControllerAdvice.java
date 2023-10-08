@@ -18,4 +18,29 @@ public class WeatherControllerAdvice {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<String> handleException(InvalidUrlException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleException(KeyNotProvidedException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleException(ParameterNotProvidedException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleException(UnknownWeatherApiException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleException(WrongLocationException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
 }
