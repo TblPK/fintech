@@ -13,12 +13,15 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class WeatherAPIService {
 
-    @Qualifier("weatherTemplate")
     private final RestTemplate weatherTemplate;
     private final WeatherService weatherService;
     private final DateTimeFormatter formatter;
 
-    public WeatherAPIService(RestTemplate weatherTemplate, WeatherService weatherService, DateTimeFormatter formatter) {
+    public WeatherAPIService(
+            @Qualifier("weatherTemplate") RestTemplate weatherTemplate,
+            WeatherService weatherService,
+            DateTimeFormatter formatter
+    ) {
         this.weatherTemplate = weatherTemplate;
         this.weatherService = weatherService;
         this.formatter = formatter;

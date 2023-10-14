@@ -1,16 +1,26 @@
 package com.weather.models;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.weather.exception.*;
+import com.weather.exception.BadRequestToWeatherApiException;
+import com.weather.exception.ParsingJsonException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResponseErrorHandler;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
 @Component
 public class WeatherTemplateErrorHandler implements ResponseErrorHandler {
+    private final ObjectMapper objectMapper;
+
+    public WeatherTemplateErrorHandler(@Qualifier("mapper") ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Override
     public boolean hasError(ClientHttpResponse response) throws IOException {
@@ -19,18 +29,17 @@ public class WeatherTemplateErrorHandler implements ResponseErrorHandler {
 
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {
-        JsonNode error = new ObjectMapper().readTree(response.getBody()).get("error");
-        String message = error.get("message").asText();
+        try {
+            String responseBody = new BufferedReader(new InputStreamReader(response.getBody()))
+                    .lines()
+                    .collect(Collectors.joining("\n"));
 
-        switch (error.get("code").asInt()) {
-            case 1002 -> throw new KeyNotProvidedException(message);
-            case 1003 -> throw new ParameterNotProvidedException(message);
-            case 1005 -> throw new InvalidUrlException(message);
-            case 1006 -> throw new WrongLocationException(message);
-            // more exceptions
-            default -> throw new UnknownWeatherApiException(message);
+            Error error = objectMapper.readValue(responseBody, ErrorDto.class).error();
+            int code = error.code();
+            String message = error.message();
+            throw new BadRequestToWeatherApiException("Code error and message: " + code + " " + message, response.getStatusCode());
+        } catch (JsonProcessingException jsonException) {
+            throw new ParsingJsonException("Error parsing JSON");
         }
-
     }
-
 }

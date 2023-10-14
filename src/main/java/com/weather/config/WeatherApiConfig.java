@@ -13,7 +13,6 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 @RequiredArgsConstructor
 public class WeatherApiConfig {
-
     private final WeatherTemplateErrorHandler weatherTemplateErrorHandler;
 
     @Value("${api_key}")
@@ -38,5 +37,4 @@ public class WeatherApiConfig {
     public DateTimeFormatter dateTimeFormatter() {
         return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     }
-
 }

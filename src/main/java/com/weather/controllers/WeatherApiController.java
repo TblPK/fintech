@@ -26,9 +26,9 @@ public class WeatherApiController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully weather data added", content = @Content)
     })
-    @GetMapping("/{regionName}")
+    @GetMapping("/{city}")
     @RateLimiter(name = "weatherAPI")
-    public ResponseEntity<WeatherApiDto> getWeather(@PathVariable String regionName) {
-        return weatherAPIService.getCurrentWeather(regionName);
+    public ResponseEntity<WeatherApiDto> getWeather(@PathVariable("city") String cityName) {
+        return weatherAPIService.getCurrentWeather(cityName);
     }
 }
