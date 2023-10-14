@@ -1,6 +1,6 @@
 package com.weather.config;
 
-import com.weather.models.WeatherTemplateHandler;
+import com.weather.models.WeatherTemplateErrorHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -8,11 +8,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.format.DateTimeFormatter;
+
 @Configuration
 @RequiredArgsConstructor
-public class WeatherAPIConfig {
+public class WeatherApiConfig {
 
-    private final WeatherTemplateHandler weatherTemplateHandler;
+    private final WeatherTemplateErrorHandler weatherTemplateErrorHandler;
 
     @Value("${api_key}")
     private String apiKey;
@@ -24,11 +26,17 @@ public class WeatherAPIConfig {
     public RestTemplate weatherTemplate() {
         return new RestTemplateBuilder()
                 .rootUri(apiUrl)
-                .errorHandler(weatherTemplateHandler)
+                .errorHandler(weatherTemplateErrorHandler)
                 .additionalInterceptors((request, body, execution) -> {
                     request.getHeaders().add("key", apiKey);
                     return execution.execute(request, body);
                 })
                 .build();
     }
+
+    @Bean
+    public DateTimeFormatter dateTimeFormatter() {
+        return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    }
+
 }

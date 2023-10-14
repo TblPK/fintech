@@ -10,7 +10,7 @@ import org.springframework.web.client.ResponseErrorHandler;
 import java.io.IOException;
 
 @Component
-public class WeatherTemplateHandler implements ResponseErrorHandler {
+public class WeatherTemplateErrorHandler implements ResponseErrorHandler {
 
     @Override
     public boolean hasError(ClientHttpResponse response) throws IOException {

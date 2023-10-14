@@ -1,7 +1,8 @@
 package com.weather.controllers;
 
-import com.weather.models.WeatherAPIResponse;
+import com.weather.models.WeatherApiDto;
 import com.weather.services.WeatherAPIService;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/weatherapi")
+@RequestMapping("/weather-api")
 @Tag(name = "WeatherApiController", description = "Controller for Weather API")
 public class WeatherApiController {
     private final WeatherAPIService weatherAPIService;
@@ -26,7 +27,8 @@ public class WeatherApiController {
             @ApiResponse(responseCode = "200", description = "Successfully weather data added", content = @Content)
     })
     @GetMapping("/{regionName}")
-    public ResponseEntity<WeatherAPIResponse> getWeather(@PathVariable String regionName) {
-        return weatherAPIService.getCurrentWeatherFromWeatherAPI(regionName);
+    @RateLimiter(name = "weatherAPI")
+    public ResponseEntity<WeatherApiDto> getWeather(@PathVariable String regionName) {
+        return weatherAPIService.getCurrentWeather(regionName);
     }
 }
