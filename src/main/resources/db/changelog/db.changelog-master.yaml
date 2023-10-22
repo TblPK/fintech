@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-cities
+      author: me
+      changes:
+        - sqlFile:
+            path: sql/create-city.sql
+            splitStatements: false
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: create-conditions
+      author: againMe
+      changes:
+        - sqlFile:
+            path: sql/create-weather-type.sql
+            splitStatements: false
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: create-weathers
+      author: okay
+      changes:
+        - sqlFile:
+            path: sql/create-weathers.sql
+            splitStatements: false
+            relativeToChangelogFile: true

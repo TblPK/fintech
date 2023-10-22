@@ -9,13 +9,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/weather-api")
 @Tag(name = "WeatherApiController", description = "Controller for Weather API")
@@ -28,7 +27,7 @@ public class WeatherApiController {
     })
     @GetMapping("/{city}")
     @RateLimiter(name = "weatherAPI")
-    public ResponseEntity<WeatherApiDto> getWeather(@PathVariable("city") String cityName) {
+    public WeatherApiDto getWeather(@PathVariable("city") String cityName) {
         return weatherAPIService.getCurrentWeather(cityName);
     }
 }
