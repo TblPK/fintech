@@ -2,7 +2,6 @@ package com.weather.repositories.springjdbc;
 
 import com.weather.models.springjdbc.City;
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -15,7 +14,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CityJdbcRepository {
 
-    private static final RowMapper<City> ROW_MAPPER = new BeanPropertyRowMapper<>(City.class);
+    private static final RowMapper<City> ROW_MAPPER = (rs, rowNum) -> {
+        City city = new City();
+        city.setId(rs.getInt("id"));
+        city.setName(rs.getString("name"));
+        return city;
+    };
 
     private static final String SQL_FIND_ALL = "SELECT * FROM city";
     private static final String SQL_FIND_BY_ID = "SELECT * FROM city WHERE id = :id";
