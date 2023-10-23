@@ -4,10 +4,7 @@ import com.weather.models.springjdbc.Weather;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
@@ -40,7 +37,6 @@ public class WeatherJdbcRepository {
     public Weather findById(Integer id) {
         Map<String, Object> params = Map.of("id", id);
         return jdbcTemplate.queryForObject(SQL_FIND_BY_ID, params, ROW_MAPPER);
-
     }
 
     public void insert(Weather weather) {
@@ -49,8 +45,7 @@ public class WeatherJdbcRepository {
         params.put("dateTime", weather.getDateTime());
         params.put("weatherTypeId", weather.getWeatherType().getId());
 
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(SQL_INSERT, new MapSqlParameterSource(params), keyHolder);
+        jdbcTemplate.update(SQL_INSERT, params);
     }
 
     public void updateById(Weather weather) {

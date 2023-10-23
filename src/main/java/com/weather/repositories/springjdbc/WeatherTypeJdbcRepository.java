@@ -4,10 +4,7 @@ import com.weather.models.springjdbc.WeatherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
@@ -39,8 +36,7 @@ public class WeatherTypeJdbcRepository {
 
     public void insert(WeatherType weatherType) {
         Map<String, Object> params = Collections.singletonMap("type", weatherType.getType());
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(SQL_INSERT, new MapSqlParameterSource(params), keyHolder);
+        jdbcTemplate.update(SQL_INSERT, params);
     }
 
     public void updateById(WeatherType weatherType) {
