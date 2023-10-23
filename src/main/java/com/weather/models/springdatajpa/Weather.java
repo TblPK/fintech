@@ -26,6 +26,10 @@ public class Weather {
     @Column(name = "date_time")
     private LocalDateTime dateTime;
 
+    @Column(name = "temperature")
+    private Double temperature;
+
+
     @ManyToOne
     @JoinColumn(name = "weather_type_id")
     private WeatherType weatherType;

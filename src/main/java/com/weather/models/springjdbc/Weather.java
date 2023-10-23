@@ -11,5 +11,6 @@ public class Weather {
     private Integer id;
     private City cityId;
     private LocalDateTime dateTime;
+    private Double temperature;
     private WeatherType weatherType;
 }

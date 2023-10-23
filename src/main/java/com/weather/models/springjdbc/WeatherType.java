@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class WeatherType {
     private Integer id;
-    private String text;
+    private String type;
 }

@@ -37,14 +37,14 @@ public class CityJdbcRepository {
         return jdbcTemplate.queryForObject(SQL_FIND_BY_ID, params, ROW_MAPPER);
     }
 
-    public void insert(String name) {
-        Map<String, Object> params = Collections.singletonMap("name", name);
+    public void insert(City city) {
+        Map<String, Object> params = Collections.singletonMap("name", city.getName());
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(SQL_INSERT, new MapSqlParameterSource(params), keyHolder);
     }
 
-    public void updateById(Integer id, String name) {
-        Map<String, Object> params = Map.of("id", id, "name", name);
+    public void updateById(City city) {
+        Map<String, Object> params = Map.of("id", city.getId(), "name", city.getName());
         jdbcTemplate.update(SQL_UPDATE_BY_ID, params);
     }
 

@@ -37,14 +37,14 @@ public class WeatherTypeJdbcRepository {
         return jdbcTemplate.queryForObject(SQL_FIND_BY_ID, params, ROW_MAPPER);
     }
 
-    public void insert(String type) {
-        Map<String, Object> params = Collections.singletonMap("type", type);
+    public void insert(WeatherType weatherType) {
+        Map<String, Object> params = Collections.singletonMap("type", weatherType.getType());
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(SQL_INSERT, new MapSqlParameterSource(params), keyHolder);
     }
 
-    public void updateById(Integer id, String type) {
-        Map<String, Object> params = Map.of("id", id, "type", type);
+    public void updateById(WeatherType weatherType) {
+        Map<String, Object> params = Map.of("id", weatherType.getId(), "type", weatherType.getType());
         jdbcTemplate.update(SQL_UPDATE_BY_ID, params);
     }
 

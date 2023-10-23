@@ -1,0 +1,89 @@
+databaseChangeLog:
+  - changeSet:
+      id: insertData
+      author: me
+      changes:
+        - insert:
+            tableName: city
+            columns:
+              - column:
+                  name: name
+                  value: "City1"
+        - insert:
+            tableName: city
+            columns:
+              - column:
+                  name: name
+                  value: "City2"
+        - insert:
+            tableName: weather_type
+            columns:
+              - column:
+                  name: weather_type
+                  value: "Type1"
+        - insert:
+            tableName: weather_type
+            columns:
+              - column:
+                  name: weather_type
+                  value: "Type2"
+        - insert:
+            tableName: weather
+            columns:
+              - column:
+                  name: date_time
+                  value: "2023-10-23"
+              - column:
+                  name: temperature
+                  value: 25.5
+              - column:
+                  name: city_id
+                  value: 1
+              - column:
+                  name: weather_type_id
+                  value: 1
+        - insert:
+            tableName: weather
+            columns:
+              - column:
+                  name: date_time
+                  value: "2023-10-24"
+              - column:
+                  name: temperature
+                  value: 23.0
+              - column:
+                  name: city_id
+                  value: 1
+              - column:
+                  name: weather_type_id
+                  value: 2
+        - insert:
+            tableName: weather
+            columns:
+              - column:
+                  name: date_time
+                  value: "2023-10-23"
+              - column:
+                  name: temperature
+                  value: 20.0
+              - column:
+                  name: city_id
+                  value: 2
+              - column:
+                  name: weather_type_id
+                  value: 1
+        - insert:
+            tableName: weather
+            columns:
+              - column:
+                  name: date_time
+                  value: "2023-10-24"
+              - column:
+                  name: temperature
+                  value: 18.5
+              - column:
+                  name: city_id
+                  value: 2
+              - column:
+                  name: weather_type_id
+                  value: 2
