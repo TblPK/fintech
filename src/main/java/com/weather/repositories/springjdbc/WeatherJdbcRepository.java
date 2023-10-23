@@ -8,12 +8,14 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Repository
 @RequiredArgsConstructor
 public class WeatherJdbcRepository {
 
@@ -42,7 +44,7 @@ public class WeatherJdbcRepository {
     }
 
     public void insert(Weather weather) {
-        Map<String, Object> params = new LinkedHashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("cityId", weather.getCityId().getId());
         params.put("dateTime", weather.getDateTime());
         params.put("weatherTypeId", weather.getWeatherType().getId());
@@ -52,7 +54,7 @@ public class WeatherJdbcRepository {
     }
 
     public void updateById(Weather weather) {
-        Map<String, Object> params = new LinkedHashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("id", weather.getId());
         params.put("cityId", weather.getCityId().getId());
         params.put("dateTime", weather.getDateTime());
