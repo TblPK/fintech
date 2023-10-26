@@ -27,7 +27,7 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
               - column:
-                  name: weather_type
+                  name: type
                   type: varchar(255)
                   constraints:
                     unique: true
