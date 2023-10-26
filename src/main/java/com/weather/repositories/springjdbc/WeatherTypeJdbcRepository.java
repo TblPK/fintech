@@ -6,6 +6,9 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Map;
+
 @Repository
 @RequiredArgsConstructor
 public class WeatherTypeJdbcRepository {
@@ -18,5 +21,17 @@ public class WeatherTypeJdbcRepository {
     };
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
+
+    public WeatherType findByType(String weatherType) {
+        Map<String, Object> params = Map.of("type", weatherType);
+        List<WeatherType> result = jdbcTemplate.query("SELECT * FROM weather_type WHERE type = :type", params, ROW_MAPPER);
+        return result.isEmpty()? null : result.get(0);
+    }
+
+    public WeatherType save(WeatherType weatherType) {
+        Map<String, Object> params = Map.of("type", weatherType.getType());
+        jdbcTemplate.update("INSERT INTO weather_type(type) VALUES (:type);", params);
+        return findByType(weatherType.getType());
+    }
 
 }

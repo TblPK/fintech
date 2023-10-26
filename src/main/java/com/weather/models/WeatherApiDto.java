@@ -14,6 +14,10 @@ public record WeatherApiDto(
     public String getDataTime() {
         return current.lastUpdated();
     }
+
+    public String getCondition() {
+        return current.condition().text();
+    }
 }
 
 record Location(

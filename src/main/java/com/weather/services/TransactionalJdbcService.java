@@ -4,8 +4,10 @@ import com.weather.exception.WeatherNotFoundException;
 import com.weather.models.WeatherApiDto;
 import com.weather.models.springjdbc.City;
 import com.weather.models.springjdbc.Weather;
+import com.weather.models.springjdbc.WeatherType;
 import com.weather.repositories.springjdbc.CityJdbcRepository;
 import com.weather.repositories.springjdbc.WeatherJdbcRepository;
+import com.weather.repositories.springjdbc.WeatherTypeJdbcRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -22,6 +24,7 @@ public class TransactionalJdbcService {
     private final DateTimeFormatter dateTimeFormatter;
     private final CityJdbcRepository cityJdbcRepository;
     private final WeatherJdbcRepository weatherJdbcRepository;
+    private final WeatherTypeJdbcRepository weatherTypeJdbcRepository;
 
     public void updateWeathersByName(String cityName) {
         transactionTemplate.executeWithoutResult(status -> {
@@ -30,10 +33,9 @@ public class TransactionalJdbcService {
                 throw new WeatherNotFoundException(cityName);
             }
             List<Weather> weathers = weatherJdbcRepository.findAllByCityId(city);
-            weathers.forEach(System.out::println);
             int i = 0;
             for (Weather weather : weathers) {
-                //if (i++ == 1) throw new RuntimeException(); // костыль для проверки работы транзакции
+                // if (i++ == 1) throw new RuntimeException(); // для проверки работы транзакции
                 updateWeather(weather, cityName);
             }
         });
@@ -43,6 +45,13 @@ public class TransactionalJdbcService {
         WeatherApiDto weatherApiDto = weatherAPIService.getCurrentWeather(cityName);
         weather.setTemperature(weatherApiDto.getTempC());
         weather.setDateTime(LocalDateTime.parse(weatherApiDto.getDataTime(), dateTimeFormatter));
+        WeatherType weatherType = weatherTypeJdbcRepository.findByType(weatherApiDto.getCondition());
+        if (weatherType == null) {
+            weatherType = new WeatherType();
+            weatherType.setType(weatherApiDto.getCondition());
+            weatherType = weatherTypeJdbcRepository.save(weatherType);
+        }
+        weather.setWeatherType(weatherType);
         weatherJdbcRepository.save(weather);
     }
 

@@ -20,13 +20,13 @@ databaseChangeLog:
             columns:
               - column:
                   name: type
-                  value: "d"
+                  value: "Sunny"
         - insert:
             tableName: weather_type
             columns:
               - column:
                   name: type
-                  value: "f"
+                  value: "Partly cloudy"
         - insert:
             tableName: weather
             columns:

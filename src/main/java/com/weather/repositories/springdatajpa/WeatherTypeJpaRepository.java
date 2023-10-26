@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WeatherTypeJpaRepository extends JpaRepository<WeatherType, Integer> {
-
+    WeatherType findByType(String type);
 }

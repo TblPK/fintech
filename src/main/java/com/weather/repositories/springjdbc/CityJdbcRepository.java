@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -23,6 +24,7 @@ public class CityJdbcRepository {
 
     public City findCityByName(String name) {
         Map<String, Object> params = Map.of("name", name);
-        return jdbcTemplate.queryForObject("SELECT * FROM city WHERE name = :name", params, ROW_MAPPER);
+        List<City> result = jdbcTemplate.query("SELECT * FROM city WHERE name = :name", params, ROW_MAPPER);
+        return result.isEmpty()? null : result.get(0);
     }
 }

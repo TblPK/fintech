@@ -14,9 +14,16 @@ databaseChangeLog:
                     primaryKey: true
               - column:
                   name: name
-                  type: text
+                  type: varchar(255)
                   constraints:
                     nullable: false
+                    unique: true
+        - createIndex:
+            indexName: idx_city_name
+            tableName: city
+            columns:
+              - column:
+                  name: name
         - createTable:
             tableName: weather_type
             columns:
@@ -30,6 +37,7 @@ databaseChangeLog:
                   name: type
                   type: varchar(255)
                   constraints:
+                    nullable: false
                     unique: true
         - createTable:
             tableName: weather
@@ -64,3 +72,11 @@ databaseChangeLog:
                     nullable: false
                     references: weather_type(id)
                     foreignKeyName: fk_weather_type_id
+        - createIndex:
+            indexName: idx_weather_city_type
+            tableName: weather
+            columns:
+              - column:
+                  name: city_id
+              - column:
+                  name: weather_type_id
