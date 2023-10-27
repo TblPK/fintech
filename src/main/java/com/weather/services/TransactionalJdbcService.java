@@ -10,24 +10,27 @@ import com.weather.repositories.springjdbc.WeatherJdbcRepository;
 import com.weather.repositories.springjdbc.WeatherTypeJdbcRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionTemplate;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class TransactionalJdbcService {
-    private final TransactionTemplate transactionTemplate;
     private final WeatherAPIService weatherAPIService;
     private final DateTimeFormatter dateTimeFormatter;
     private final CityJdbcRepository cityJdbcRepository;
     private final WeatherJdbcRepository weatherJdbcRepository;
     private final WeatherTypeJdbcRepository weatherTypeJdbcRepository;
+    private final Connection connection;
 
     public void updateWeathersByName(String cityName) {
-        transactionTemplate.executeWithoutResult(status -> {
+        try {
+            connection.setAutoCommit(false);
+            connection.setTransactionIsolation(Connection.TRANSACTION_NONE);
             City city = cityJdbcRepository.findCityByName(cityName);
             if (city == null) {
                 throw new WeatherNotFoundException(cityName);
@@ -35,10 +38,17 @@ public class TransactionalJdbcService {
             List<Weather> weathers = weatherJdbcRepository.findAllByCityId(city);
             int i = 0;
             for (Weather weather : weathers) {
-                // if (i++ == 1) throw new RuntimeException(); // для проверки работы транзакции
+                if (i++ == 1) throw new SQLException(); // для проверки работы транзакции
                 updateWeather(weather, cityName);
             }
-        });
+            connection.commit();
+        } catch (SQLException ex) {
+            try {
+                connection.rollback();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private void updateWeather(Weather weather, String cityName) {
