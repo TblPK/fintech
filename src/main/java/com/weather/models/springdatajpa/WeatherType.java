@@ -16,7 +16,7 @@ public class WeatherType {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "weather_type")
+    @Column(name = "type")
     private String type;
 
 }

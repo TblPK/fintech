@@ -1,14 +1,14 @@
 package com.weather.repositories.springjdbc;
 
+import com.weather.models.springjdbc.City;
 import com.weather.models.springjdbc.Weather;
+import com.weather.models.springjdbc.WeatherType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collections;
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -16,50 +16,56 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class WeatherJdbcRepository {
 
-    private static final RowMapper<Weather> ROW_MAPPER = new BeanPropertyRowMapper<>(Weather.class);
+    private static final RowMapper<Weather> ROW_MAPPER = (rs, rowNum) -> {
+        Weather weather = new Weather();
+        weather.setId(rs.getInt("id"));
+        weather.setTemperature(rs.getDouble("temperature"));
+        weather.setDateTime(rs.getObject("date_time", LocalDateTime.class));
 
-    private static final String SQL_FIND_ALL = "SELECT * FROM weather";
+        City cityResult = new City();
+        cityResult.setId(rs.getInt("city_id"));
+        cityResult.setName(rs.getString("name"));
+        weather.setCityId(cityResult);
 
-    private static final String SQL_FIND_BY_ID = "SELECT * FROM weather WHERE id = :id";
+        WeatherType weatherType = new WeatherType();
+        weatherType.setId(rs.getInt("weather_type_id"));
+        weatherType.setType(rs.getString("type"));
+        weather.setWeatherType(weatherType);
 
-    private static final String SQL_INSERT = "INSERT INTO weather (city_id, date_time, weather_type_id) VALUES (:cityId, :dateTime, :weatherTypeId)";
-
-    private static final String SQL_UPDATE_BY_ID = "UPDATE weather SET city_id = :cityId, date_time = :dateTime, weather_type_id = :weatherTypeId WHERE id = :id";
-
-    private static final String SQL_DELETE_BY_ID = "DELETE FROM weather WHERE id = :id";
+        return weather;
+    };
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public List<Weather> findAll() {
-        return jdbcTemplate.query(SQL_FIND_ALL, Collections.emptyMap(), ROW_MAPPER);
+    public List<Weather> findAllByCityId(City city) {
+        Map<String, Object> params = Map.of("cityId", city.getId());
+        return jdbcTemplate.query("""
+                SELECT
+                w.*,
+                c.name AS name,
+                wt.type AS type
+                FROM weather w
+                JOIN city c ON w.city_id = c.id
+                JOIN weather_type wt ON w.weather_type_id = wt.id
+                WHERE w.city_id = :cityId
+                """, params, ROW_MAPPER);
     }
 
-    public Weather findById(Integer id) {
-        Map<String, Object> params = Map.of("id", id);
-        return jdbcTemplate.queryForObject(SQL_FIND_BY_ID, params, ROW_MAPPER);
-    }
+    public void save(Weather weather) {
+        Map<String, Object> params = Map.of(
+                "id", weather.getId(),
+                "dateTime", weather.getDateTime(),
+                "temperature", weather.getTemperature(),
+                "cityId", weather.getCityId().getId(),
+                "weatherTypeId", weather.getWeatherType().getId());
 
-    public void insert(Weather weather) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("cityId", weather.getCityId().getId());
-        params.put("dateTime", weather.getDateTime());
-        params.put("weatherTypeId", weather.getWeatherType().getId());
-
-        jdbcTemplate.update(SQL_INSERT, params);
-    }
-
-    public void updateById(Weather weather) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", weather.getId());
-        params.put("cityId", weather.getCityId().getId());
-        params.put("dateTime", weather.getDateTime());
-        params.put("weatherTypeId", weather.getWeatherType().getId());
-
-        jdbcTemplate.update(SQL_UPDATE_BY_ID, params);
-    }
-
-    public void deleteById(Integer id) {
-        Map<String, Object> params = Map.of("id", id);
-        jdbcTemplate.update(SQL_DELETE_BY_ID, params);
+        jdbcTemplate.update("""
+                UPDATE weather SET
+                date_time = :dateTime,
+                temperature = :temperature,
+                city_id = :cityId,
+                weather_type_id = :weatherTypeId
+                WHERE id = :id
+                """, params);
     }
 }
