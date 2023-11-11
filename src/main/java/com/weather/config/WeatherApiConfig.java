@@ -1,5 +1,6 @@
 package com.weather.config;
 
+import com.weather.models.Properties;
 import com.weather.models.WeatherTemplateErrorHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,14 +38,15 @@ public class WeatherApiConfig {
     private String driverClassName;
 
     @Bean
+    public Properties getProperties() {
+        return new Properties(apiKey, apiUrl);
+    }
+
+    @Bean
     public RestTemplate weatherTemplate() {
         return new RestTemplateBuilder()
                 .rootUri(apiUrl)
                 .errorHandler(weatherTemplateErrorHandler)
-                .additionalInterceptors((request, body, execution) -> {
-                    request.getHeaders().add("key", apiKey);
-                    return execution.execute(request, body);
-                })
                 .build();
     }
 

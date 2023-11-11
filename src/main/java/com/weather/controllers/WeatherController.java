@@ -54,7 +54,7 @@ public class WeatherController {
     })
     @GetMapping("/")
     public Map<String, List<Weather>> getAllWeather() {
-        return weatherService.getWeatherRepository().getTempDB();
+        return weatherService.getAllWeathers();
     }
 
     /**

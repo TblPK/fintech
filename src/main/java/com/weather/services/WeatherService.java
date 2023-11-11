@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Getter
@@ -45,6 +46,10 @@ public class WeatherService {
         return weatherList;
     }
 
+    public Map<String, List<Weather>> getAllWeathers() {
+        return getWeatherRepository().getTempDB();
+    }
+
     /**
      * Создание нового города с информацией о температуре и дате.
      *
@@ -54,7 +59,7 @@ public class WeatherService {
      * @throws WeatherAlreadyExistsException Если город уже существует.
      */
     public void createCity(String cityName, double temperature, LocalDateTime dateTime) {
-        boolean isExists = weatherRepository.addCity(cityName, temperature, dateTime);
+        boolean isExists = getWeatherRepository().addCity(cityName, temperature, dateTime);
         if (!isExists) {
             throw new WeatherAlreadyExistsException(cityName);
         }
@@ -69,7 +74,7 @@ public class WeatherService {
      * @throws WeatherNotFoundException Если данные о погоде не найдены.
      */
     public void updateWeather(String cityName, double temperature, LocalDateTime dateTime) {
-        boolean isExists = weatherRepository.getTempDB().containsKey(cityName);
+        boolean isExists = getWeatherRepository().getTempDB().containsKey(cityName);
         if (!isExists) {
             throw new WeatherNotFoundException(cityName);
         }
