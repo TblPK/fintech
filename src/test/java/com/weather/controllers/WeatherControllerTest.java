@@ -38,7 +38,7 @@ class WeatherControllerTest {
     WeatherService weatherService;
 
     @Test
-    void getWeatherListForDateReturnsWeatherListWhenDateEqual() throws Exception {
+    void getWeatherListForDateReturnWeatherListWhenDateEqual() throws Exception {
         LocalDate date = LocalDate.now();
         String city = "Moscow";
         Weather weather1 = Weather.builder().cityName(city).cityId(UUID.randomUUID()).build();
@@ -53,7 +53,7 @@ class WeatherControllerTest {
     }
 
     @Test
-    void getWeatherListForDateReturnsNotFound() throws Exception {
+    void getWeatherListForDateReturnNotFound() throws Exception {
         LocalDate date = LocalDate.now();
         String city = "Moscow";
 
@@ -66,7 +66,7 @@ class WeatherControllerTest {
     }
 
     @Test
-    void getAllWeatherReturnsMapOfListOfAllWeatherData() throws Exception {
+    void getAllWeatherReturnMapOfListOfAllWeatherData() throws Exception {
         String city1 = "Moscow";
         String city2 = "Saint-Petersburg";
         Weather weather1 = Weather.builder().cityName(city1).cityId(UUID.randomUUID()).build();

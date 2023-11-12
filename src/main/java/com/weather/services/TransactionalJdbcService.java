@@ -30,7 +30,6 @@ public class TransactionalJdbcService {
     public void updateWeathersByName(String cityName) {
         try {
             connection.setAutoCommit(false);
-            connection.setTransactionIsolation(Connection.TRANSACTION_NONE);
             City city = cityJdbcRepository.findCityByName(cityName);
             if (city == null) {
                 throw new WeatherNotFoundException(cityName);

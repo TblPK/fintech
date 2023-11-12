@@ -64,7 +64,7 @@ class WeatherAPIServiceTest {
     }
 
     @Test
-    void getCurrentWeatherReturnsNoMatchingLocationFound() {
+    void getCurrentWeatherReturnNoMatchingLocationFound() {
         String expected = "{\"error\":{\"code\":1006,\"message\":\"No matching location found.\"}}";
         String city = "notCity";
 
