@@ -18,6 +18,14 @@ public record WeatherApiDto(
     public String getCondition() {
         return current.condition().text();
     }
+
+    public String getName() {
+        return location.name();
+    }
+
+    public String getCountry() {
+        return location.country();
+    }
 }
 
 record Location(

@@ -8,7 +8,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@Builder
 @RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class Weather {
     @NonNull
     private UUID cityId;
