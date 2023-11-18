@@ -87,3 +87,39 @@ databaseChangeLog:
               - column:
                   name: weather_type_id
                   value: 2
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: name
+                  value: admin
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: name
+                  value: user
+        - insert:
+            tableName: usr
+            columns:
+              - column:
+                  name: username
+                  value: admin
+              - column:
+                  name: password
+                  value: 123
+              - column:
+                  name: role_id
+                  value: 1
+        - insert:
+            tableName: usr
+            columns:
+              - column:
+                  name: username
+                  value: notAdmin
+              - column:
+                  name: password
+                  value: 12345
+              - column:
+                  name: role_id
+                  value: 2
