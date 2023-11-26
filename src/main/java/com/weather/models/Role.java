@@ -1,5 +1,6 @@
 package com.weather.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ public class Role implements GrantedAuthority {
     private String name;
 
     @Override
+    @JsonIgnore
     public String getAuthority() {
         return name;
     }

@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -24,18 +24,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(antMatcher("/reg/**")).anonymous()
-//                        .requestMatchers(antMatcher("/swagger-ui/**")).permitAll()
-//                        .requestMatchers(PathRequest.toH2Console()).hasRole("ADMIN")
-//                        .anyRequest().authenticated()
+//                        .requestMatchers(antMatcher("/reg/**")).permitAll() - это не работает
+//                        .requestMatchers(antMatcher("/swagger-ui/**")).permitAll() - это не работает
+                                .requestMatchers(PathRequest.toH2Console()).hasRole("ADMIN")
+                                .anyRequest().permitAll() // так что так
                 )
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers(PathRequest.toH2Console())
-                )
+                .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(withDefaults())
                 .logout(LogoutConfigurer::permitAll)
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
-
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .httpBasic(withDefaults());
         return http.build();
     }
 
