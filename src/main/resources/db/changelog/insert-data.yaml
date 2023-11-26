@@ -92,13 +92,13 @@ databaseChangeLog:
             columns:
               - column:
                   name: name
-                  value: admin
+                  value: ROLE_ADMIN
         - insert:
             tableName: role
             columns:
               - column:
                   name: name
-                  value: user
+                  value: ROLE_USER
         - insert:
             tableName: usr
             columns:
@@ -107,7 +107,7 @@ databaseChangeLog:
                   value: admin
               - column:
                   name: password
-                  value: 123
+                  value: $2a$10$0KDhuQYY0xCgvDLC8IO9xOlvZsyNKrlVJP5RrpaCp/4ZCOOebhNMu
               - column:
                   name: role_id
                   value: 1
@@ -119,7 +119,7 @@ databaseChangeLog:
                   value: notAdmin
               - column:
                   name: password
-                  value: 12345
+                  value: $2a$10$0KDhuQYY0xCgvDLC8IO9xOlvZsyNKrlVJP5RrpaCp/4ZCOOebhNMu
               - column:
                   name: role_id
                   value: 2

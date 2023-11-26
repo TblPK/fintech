@@ -6,6 +6,7 @@ import com.weather.services.TransactionalJpaService;
 import com.weather.services.WeatherAPIService;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,16 +18,19 @@ public class WeatherApiController {
     private final TransactionalJdbcService transactionalJdbcService;
 
     @GetMapping("/{city}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @RateLimiter(name = "weatherAPI")
     public WeatherApiDto getWeather(@PathVariable("city") String cityName) {
         return weatherAPIService.getCurrentWeather(cityName);
     }
 
     @PutMapping("/jpa/{cityName}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public void updateWeatherViaJpa(@PathVariable String cityName) {
         transactionalJpaService.updateWeathersByName(cityName);
     }
     @PutMapping("/jdbc/{cityName}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public void updateWeatherViaJdbc(@PathVariable String cityName) {
         transactionalJdbcService.updateWeathersByName(cityName);
     }
