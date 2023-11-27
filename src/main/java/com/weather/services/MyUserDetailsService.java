@@ -2,6 +2,7 @@ package com.weather.services;
 
 import com.weather.exception.IncorrectUsernameOrPasswordException;
 import com.weather.exception.UserAlreadyExistsException;
+import com.weather.models.Role;
 import com.weather.models.User;
 import com.weather.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,9 @@ public class MyUserDetailsService implements UserDetailsService {
             throw new UserAlreadyExistsException("User already exists with username: " + user.getUsername());
         });
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(new Role());
+        user.getRole().setName("ROLE_USER");
+        user.getRole().setId(2L);
         userRepository.save(user);
     }
 }

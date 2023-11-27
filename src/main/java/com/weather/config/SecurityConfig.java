@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -24,10 +25,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers(antMatcher("/reg/**")).permitAll() - это не работает
-//                        .requestMatchers(antMatcher("/swagger-ui/**")).permitAll() - это не работает
-                                .requestMatchers(PathRequest.toH2Console()).hasRole("ADMIN")
-                                .anyRequest().permitAll() // так что так
+                        .requestMatchers(PathRequest.toH2Console()).hasRole("ADMIN")
+                        .requestMatchers(antMatcher("/swagger-ui/**")).permitAll()
+                        .requestMatchers(antMatcher("/reg/**")).permitAll()
+                        .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(withDefaults())

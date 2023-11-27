@@ -28,6 +28,7 @@ public class User implements UserDetails {
     private String password;
 
     @ManyToOne
+    @JsonIgnore
     private Role role;
 
     @Override
