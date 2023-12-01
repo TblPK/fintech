@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -36,6 +37,7 @@ public class WeatherController {
             @ApiResponse(responseCode = "404", description = "A list of weather data in the specified city on a given date was not found", content = @Content)
     })
     @GetMapping("/{city}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public List<Weather> getWeatherListForDate(
             @PathVariable("city") @Parameter(description = "City Name") String cityName,
             @RequestParam @Parameter(description = "Required date") LocalDate date
@@ -53,6 +55,7 @@ public class WeatherController {
             @ApiResponse(responseCode = "200", description = "Successfully found a list of all weather data", content = @Content)
     })
     @GetMapping("/")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public Map<String, List<Weather>> getAllWeather() {
         return weatherService.getAllWeathers();
     }
@@ -69,6 +72,7 @@ public class WeatherController {
             @ApiResponse(responseCode = "409", description = "The city already exists", content = @Content)
     })
     @PostMapping("/{city}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public void createWeather(
             @PathVariable("city") @Parameter(description = "City Name") String cityName,
             @RequestBody @Parameter(description = "Required weather data information, including temperature and date") Weather weather
@@ -88,6 +92,7 @@ public class WeatherController {
             @ApiResponse(responseCode = "404", description = "The weather already exists", content = @Content)
     })
     @PutMapping("/{city}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public void updateWeather(
             @PathVariable("city") @Parameter(description = "City Name") String cityName,
             @RequestBody @Parameter(description = "Required weather data information, including temperature and date") Weather weather
@@ -105,6 +110,7 @@ public class WeatherController {
             @ApiResponse(responseCode = "200", description = "Successfully deleted all weather data information for the specified city", content = @Content)
     })
     @DeleteMapping("/{city}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public void deleteWeathersByCityName(
             @PathVariable("city") @Parameter(description = "City Name") String cityName
     ) {

@@ -1,16 +1,16 @@
 package com.weather.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.weather.exception.WeatherAlreadyExistsException;
-import com.weather.exception.WeatherNotFoundException;
 import com.weather.models.Weather;
 import com.weather.services.WeatherService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -20,15 +20,15 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(WeatherController.class)
-@AutoConfigureMockMvc(addFilters = false)
-class WeatherControllerTest {
+@SpringBootTest
+@AutoConfigureMockMvc
+public class WeatherControllerSecurityTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -40,7 +40,8 @@ class WeatherControllerTest {
     WeatherService weatherService;
 
     @Test
-    void getWeatherListForDateReturnWeatherListWhenDateEqual() throws Exception {
+    @WithMockUser(roles = {"USER", "ADMIN"})
+    void getWeatherListForDateReturnOkStatus() throws Exception {
         LocalDate date = LocalDate.now();
         String city = "Moscow";
         Weather weather1 = Weather.builder().cityName(city).cityId(UUID.randomUUID()).build();
@@ -55,20 +56,18 @@ class WeatherControllerTest {
     }
 
     @Test
-    void getWeatherListForDateReturnNotFound() throws Exception {
+    @WithAnonymousUser
+    void getWeatherListForDateReturnUnauthorizedStatus() throws Exception {
         LocalDate date = LocalDate.now();
         String city = "Moscow";
 
-        when(weatherService.getWeatherListForDate(city, date))
-                .thenThrow(new WeatherNotFoundException(city));
-
         mockMvc.perform(get("/api/weather/{city}", city).param("date", date.toString()))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("Data for " + city + " was not found."));
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void getAllWeatherReturnMapOfListOfAllWeatherData() throws Exception {
+    @WithMockUser(roles = {"USER", "ADMIN"})
+    void getAllWeatherReturnOkStatus() throws Exception {
         String city1 = "Moscow";
         String city2 = "Saint-Petersburg";
         Weather weather1 = Weather.builder().cityName(city1).cityId(UUID.randomUUID()).build();
@@ -80,8 +79,7 @@ class WeatherControllerTest {
                 city1, weatherData1,
                 city2, weatherData2);
 
-        when(weatherService.getAllWeathers())
-                .thenReturn(expected);
+        when(weatherService.getAllWeathers()).thenReturn(expected);
 
         mockMvc.perform(get("/api/weather/"))
                 .andExpect(status().isOk())
@@ -89,7 +87,16 @@ class WeatherControllerTest {
     }
 
     @Test
-    void createWeatherReturnStatusOk() throws Exception {
+    @WithAnonymousUser
+    void getAllWeatherReturnUnauthorizedStatus() throws Exception {
+        mockMvc.perform(get("/api/weather/"))
+                .andExpect(status().isUnauthorized());
+
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void createWeatherReturnOkStatus() throws Exception {
         String city = "Saint-Petersburg";
         Weather weather = Weather.builder().cityName(city).cityId(UUID.randomUUID()).temperature(24.5).build();
 
@@ -102,17 +109,59 @@ class WeatherControllerTest {
     }
 
     @Test
-    void createWeatherReturnStatusCreated() throws Exception {
+    @WithMockUser(roles = "USER")
+    void createWeatherReturnUnauthorizedStatus() throws Exception {
         String city = "Saint-Petersburg";
         Weather weather = Weather.builder().cityName(city).cityId(UUID.randomUUID()).temperature(24.5).build();
-
-        doThrow(new WeatherAlreadyExistsException(city)).when(weatherService).createCity(any(), anyDouble(), any());
 
         mockMvc.perform(post("/api/weather/{city}", city)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(weather)))
-                .andExpect(status().isConflict())
-                .andExpect(content().string("The city already exists: " + city));
+                .andExpect(status().isForbidden());
     }
+
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void updateWeatherReturnOkStatus() throws Exception {
+        String city = "Saint-Petersburg";
+        Weather weather = Weather.builder().cityName(city).cityId(UUID.randomUUID()).temperature(24.5).build();
+
+        doNothing().when(weatherService).updateWeather(any(), anyDouble(), any());
+
+        mockMvc.perform(put("/api/weather/{city}", city)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(weather)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void updateWeatherReturnUnauthorizedStatus() throws Exception {
+        String city = "Saint-Petersburg";
+        Weather weather = Weather.builder().cityName(city).cityId(UUID.randomUUID()).temperature(24.5).build();
+
+        mockMvc.perform(put("/api/weather/{city}", city)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(weather)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void deleteWeatherReturnOkStatus() throws Exception {
+
+        mockMvc.perform(delete("/api/weather/{id}", 1))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void deleteWeatherReturnUnauthorizedStatus() throws Exception {
+
+        mockMvc.perform(delete("/api/weather/{id}", 1))
+                .andExpect(status().isForbidden());
+    }
+
 
 }
